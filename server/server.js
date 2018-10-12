@@ -25,6 +25,12 @@ if (cluster.isMaster) {
         cluster.fork();
     }
     // Code to run if we're in a worker process
+
+    // Listen for dying workers
+    cluster.on('exit', function (worker) {
+        console.log('Worker %d died :(', worker.id);
+        cluster.fork();
+    });
 } else {
     const port = process.env.PORT;
     var app = express();
@@ -62,9 +68,5 @@ if (cluster.isMaster) {
     module.exports = { app };
 }
 
-// Listen for dying workers
-cluster.on('exit', function (worker) {
-    console.log('Worker %d died :(', worker.id);
-    cluster.fork();
-});
+
 
